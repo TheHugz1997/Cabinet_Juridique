@@ -6,11 +6,24 @@ const domaineController = require('./controllers/domaineController.js');
 const avocatController = require('./controllers/avocatController');
 const domaineavocatController = require('./controllers/domaineavocatController.js');
 
+
+// Authentication JWT
+function authenticationToken (req, res, next) {
+    const authHeader = req.headers['authorization']
+    const token = authHeader && authHeader.split(' ')[1]
+    if ( token == null ) return res.sendStatus(401)
+    jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, user) => {
+        if(err) return res.sendStatus(403)
+        req.user = user
+        next()
+    })
+}
+
 router.get('/', (req, res) => res.redirect('/domaines'));
 
 // router.get('/acceuil', acceuilController.acceuil);
 
-router.get('/domaines', domaineController.domainesList);
+router.get('/domaines', authenticationToken, domaineController.domainesList);
 
 // TODO: THE FOLLOWING REQUEST MUST BE A POST
 router.post('/domaine/creation', domaineController.domaineCreation);
@@ -43,7 +56,7 @@ router.delete('/avocat/:id_avocat', avocatController.avocatDelete);
 router.put('/avocat', avocatController.avocatModification);
 
 // router.post('/connection');
-// router.post('/inscription');
+// router.post('/registration')
 // router.get('/avocat/:id_avocat/horaire/admin');
 // router.put('/avocat/:id_avocat/horaire/admin');
 // router.get('/avocat/:id_avocat/horaire');
