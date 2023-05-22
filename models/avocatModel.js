@@ -14,8 +14,9 @@ const Avocat = db.define('Avocat', {
         allowNull: false 
     },
     coordonnees: { 
-        type: Sequelize.TEXT,
-        allowNull: false 
+        type: Sequelize.STRING,
+        allowNull: false,
+        unique: true
     },
     honoraires: {
         type: Sequelize.INTEGER,

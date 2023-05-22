@@ -13,17 +13,18 @@ exports.domainesList = async function (req, res) {
     })
 }
 
-// Hard Coded Example
-/* TODO:
-    Modify this function ( with the front input) to push it into the DB afterwards
-*/
+
 exports.domaineCreation = async function (req, res) {
-    let domaine = Domaine.build({ nom_domaine: "Droit fiscal", description: "Le droit fiscal est, au moins étymologiquement, le droit de l'impôt, le droit qui se rapporte à l'impôt, à la fiscalité. Il a pour objet les recettes de l'État (l'impôt, la taxe, la redevance, etc.) alors que le droit budgétaire concerne les dépenses de l'État."})
+    let nom_domaine = req.body.nom_domaine;
+    let description = req.body.descritpion;
+    let domaine = Domaine.build({ nom_domaine: nom_domaine, description: description})
     await domaine.save()
     .then(data => {
-        console.log("Coucou");
-        console.log(domaine.toJSON());
-        res.json(data);
+        if (data == 0) res.status(400).json({ message: "Required request body is missing"});
+        else{
+            console.log(domaine.toJSON());
+            res.json(data);
+        }
     })
     .catch(err => {
         res.status(500).json({ message: err.message })
@@ -31,8 +32,9 @@ exports.domaineCreation = async function (req, res) {
 }
 
 exports.domaineDelete = async function (req, res) {
-    if (req.params.id_domaine) {
-        await Domaine.destroy({ where: { id_domaine: req.params.id_domaine} })
+    let id_domaine = req.params.id_domaine;
+    if (id_domaine) {
+        await Domaine.destroy({ where: { id_domaine: id_domaine} })
             .then(data => {
                 if (data == 0) res.status(404).json({ message: "Legal field doesn't exist"});
                 else res.json(data);
@@ -44,16 +46,17 @@ exports.domaineDelete = async function (req, res) {
     else res.status(404).json({ message: "Legal field doesn't exist"})
 }
 
-// Hard Coded Example
-/* TODO:
-    Modify this function ( with the front input) to push it into the DB afterwards
-*/
+
 exports.domaineModification = async function (req, res) {
-    if (req.params.id_domaine > 0) {
+    let nom_domaine = req.body.nom_domaine;
+    let description = req.body.description;
+    let id_domaine = req.body.id_domaine;
+
+    if (id_domaine > 0) {
         await Domaine.update(
-            { nom_domaine: "Droit international", 
-            description: "Qu'est ce que le droit international ? Le droit international définit les responsabilités juridiques des États dans leurs relations les uns avec les autres et les rapports que peuvent avoir ces États avec les individus qui vivent sur leur territoire."},
-            { where: { id_domaine: req.params.id_domaine } }
+            { nom_domaine: nom_domaine, 
+            description: description},
+            { where: { id_domaine: id_domaine } }
         )
             .then(data => {
                 if (data[0] == 0) {res.status(404).json({ message: 'Note not found' })} 
@@ -64,9 +67,4 @@ exports.domaineModification = async function (req, res) {
             })
     }
     else res.status(404).json({ message: 'Note not found' })
-}
-
-
-exports.domaineLawyers = async function (req, res) {
-    
 }

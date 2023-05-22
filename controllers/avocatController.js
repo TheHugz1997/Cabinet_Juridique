@@ -1,5 +1,7 @@
 const db = require('../models/index');
 const Avocat = db.Avocat;
+const Domaine = db.Domaine;
+const Domaine_Avocat = db.DomaineAvocat;
 
 exports.avocatsListe = async function (req, res) {
     await Avocat.findAll()
@@ -12,8 +14,14 @@ exports.avocatsListe = async function (req, res) {
     })
 }
 
+
 exports.avocatCreation = async function (req, res) {
-    let avocat = Avocat.build({ nom_avocat: "Frédéric Scalia", coordonnees: "0416253478", honoraires: 2})
+    let nom_avocat = req.body.nom_avocat;
+    let coordonnees = req.body.coordonnees;
+    let honoraires = req.body.honoraires;
+    let photo = req.body.photo;
+
+    let avocat = Avocat.build({ nom_avocat: nom_avocat, coordonnees: coordonnees, honoraires: honoraires, photo: photo})
     await avocat.save()
     .then(data => {
         console.log(avocat.toJSON());
@@ -24,20 +32,79 @@ exports.avocatCreation = async function (req, res) {
     })
 }
 
-exports.domaineModification = async function (req, res) {
-    if (req.params.id_domaine > 0) {
-        await Domaine.update(
-            { nom_domaine: "Droit international", 
-            description: "Qu'est ce que le droit international ? Le droit international définit les responsabilités juridiques des États dans leurs relations les uns avec les autres et les rapports que peuvent avoir ces États avec les individus qui vivent sur leur territoire."},
-            { where: { id_domaine: req.params.id_domaine } }
-        )
-            .then(data => {
-                if (data[0] == 0) {res.status(404).json({ message: 'Note not found' })} 
-                else res.json({ message: 'done' })
-            })
-            .catch(err => {
-                res.status(500).json({ message: err.message })
-            })
-    }
-    else res.status(404).json({ message: 'Note not found' })
+
+exports.avocatData = async function (req, res) {
+    let id_avocat = req.params.id_avocat;
+    await Avocat.findAll({
+        where: {id_avocat},
+        attributes: ['id_avocat', 'nom_avocat', 'coordonnees', 'honoraires', 'photo'],
+        include: [{
+            model: Domaine,
+            attributes: ['id_domaine', 'nom_domaine'],
+            through: { attributes: [] }
+        }]
+    })
+    .then(data => {
+        if (data == 0) res.status(404).json({ message: "Lawyer doesn't exist"});
+        res.json(data);
+    })
+    .catch(err => {
+        res.status(500).json({ message: err.message })
+    });
 }
+
+
+exports.avocatDelete = async function (req, res) {
+    let id_avocat = req.params.id_avocat;
+
+    if (id_avocat) {
+        await Avocat.destroy({ where: 
+            { id_avocat: id_avocat}
+        })
+        .then(data => {
+            if (data == 0) res.status(404).json({ message: "Lawyer doesn't exist"});
+            else res.json({ message: "Lawyer Deleted", avocat: data});
+        })
+        .catch(err => {
+            res.status(500).json({ message: err.message })
+        })
+    }
+    else res.status(404).json({ message: "Lawyer doesn't exist"})
+}
+
+
+exports.avocatModification = async function (req, res) {
+    let id_avocat = req.body.id_avocat;
+    let nom_avocat = req.body.nom_avocat;
+    let coordonnees = req.body.coordonnees;
+    let honoraires = req.body.honoraires;
+    let photo = req.body.photo;
+
+    if (id_avocat) {
+        await Avocat.update({ 
+            nom_avocat: nom_avocat,
+            coordonnees: coordonnees,
+            honoraires: honoraires,
+            photo: photo},
+            {where: {id_avocat: id_avocat}
+        })
+        .then(data => {
+            if (data == 0) res.status(404).json({ message: "Lawyer doesn't exist"});
+            else res.json(data);
+        })
+        .catch(err => {
+            res.status(500).json({ message: err.message })
+        })
+    }
+    else res.status(404).json({ message: "Legal field doesn't exist"})
+}
+
+// {
+//     "id_avocat": "<integer>",
+//     "nom_avocat": "<string>",
+//     "id_domaine": "<integer>",
+//     "nom_domaine": "<string>",
+//     "coordonnees": "<string>",
+//     "honoraires": "<string>",
+//     "photo": "<string>"
+//   }

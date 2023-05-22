@@ -10,7 +10,7 @@ const Domaine = db.define('Domaine', {
     },
     nom_domaine: { 
         type: Sequelize.STRING, 
-        allowNull: false 
+        allowNull: false
     },
     description: { 
         type: Sequelize.TEXT,
