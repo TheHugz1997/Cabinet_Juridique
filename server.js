@@ -6,6 +6,11 @@ let app = express();
 
 app.use(express.json());
 
+// cookie parser
+const cookieParser = require("cookie-parser");
+app.use(cookieParser());
+  
+
 // access-control-allow-origins
 const cors = require('cors');
 app.use(cors());

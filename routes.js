@@ -4,27 +4,85 @@ let router = express.Router();
 // Import controllers
 const domaineController = require('./controllers/domaineController.js');
 const avocatController = require('./controllers/avocatController');
+const domaineavocatController = require('./controllers/domaineavocatController.js');
+const utilisateurController = require('./controllers/utilisateurController.js');
+const rendezVousController = require('./controllers/rendezvousController.js');
+
+const {validationToken} = require('./jwt');
 
 router.get('/', (req, res) => res.redirect('/domaines'));
 
+// router.get('/acceuil', acceuilController.acceuil);
 
-router.get('/domaines', domaineController.domainesList);
-router.post('/domaines/creation', domaineController.domaineCreation);
-router.delete('/domaines/:id_domaine', domaineController.domaineDelete);
-router.put('/domaines/:id_domaine', domaineController.domaineModification);
-router.get('/domaines/:id_domaine/avocats', domaineController.domaineLawyers);
-// Don't know why but without the front the POST request doesn't work so I had to change the router.post into router.get only for the test perdiod
-// router.get('/avocats', avocatController.avocatsListe);
-router.get('/avocats/creation', avocatController.avocatCreation);
-router.get('/avocats', avocatController.avocatsListe);
-// router.get('/avocat/:id_avocat');
-// router.delete('/avocat/:id_avocat');
-// router.put('/avocat/:id_avocat');
-// router.post('/connection');
-// router.post('/inscription');
-// router.get('/avocat/:id_avocat/horaire/admin');
-// router.put('/avocat/:id_avocat/horaire/admin');
-// router.get('/avocat/:id_avocat/horaire');
-// router.post('/avocat/:id_avocat/horaire');
+// THIS REQUEST ALLOWS TO GET ALL THE LEGAL FIELDS
+router.get('/domaines', validationToken, domaineController.legalFieldList);
+
+// TODO: THE FOLLOWING REQUEST MUST BE A POST
+router.post('/domaine/creation', validationToken, domaineController.legalFieldCreation);
+
+// TODO: THE FOLLOWING REQUEST MUST BE A DELETE
+router.delete('/domaine/:id_domaine', validationToken, domaineController.legalFieldDelete);
+
+// TODO: THE FOLLOWING REQUEST MUST BE A PUT
+router.put('/domaine', validationToken, domaineController.legalFieldModification);
+
+// THIS REQUEST ALLOWS TO GET ALL THE LAWYERS THAT BELONG TO A LEGAL FIELD
+router.get('/domaine/:id_domaine/avocats', validationToken, domaineavocatController.legalFieldLawyers);
+
+// THIS REQUEST ALLOWS TO CREATE A NEW LINK BETWEEN A LAWYER AND A LEGAL FIELD
+router.post('/domaine/:id_domaine/avocat/:id_avocat/relation', validationToken, domaineavocatController.legalFieldLawyersLink);
+
+// THIS REQUEST ALLOWS TO DELETE A LINK BETWEEN A LAWYER AND A LEGAL FIELD
+router.delete('/domaine/avocat/relation/:id_relation', validationToken, domaineavocatController.deleteLawyerLegalFieldLink)
+
+// THIS REQUEST ALLOWS TO GET ALL THE RELATIONS BETWEEN THE LAWYERS AND THE LEGAL FIELDS
+router.get('/domaines/avocats/relations', validationToken, domaineavocatController.allLegalFieldsLawyersLinks);
+
+// THIS REQUEST ALLOWS TO GET A LIST OF ALL THE LAWYERS
+router.get('/avocats', validationToken, avocatController.lawyersList);
+
+// THIS REQUEST ALLOWS TO CREATE A NEW LAWYER
+router.post('/avocat/creation', validationToken, avocatController.lawyerCreation);
+
+// THIS REQUEST ALLOWS TO GET A LAWYER'S ENTIRE DATA
+router.get('/avocat/:id_avocat', validationToken, avocatController.lawyerData);
+
+// THIS REQUEST ALLOWS TO DELETE A LAWYER
+router.delete('/avocat/:id_avocat', validationToken, avocatController.lawyerDelete);
+
+// THIS REQUEST ALLOWS TO MODIFY AN EXISTING LAWYER
+router.put('/avocat', validationToken, avocatController.lawyerModification);
+
+// THIS REQUEST ALLOWS A USER OR AN ADMIN TO LOG IN
+router.post('/connexion', utilisateurController.clientLogin);
+
+// THIS REQUEST ALLOWS A USER OR AN ADMIN TO REGISTER
+router.post('/inscription', utilisateurController.clientRegistration);
+
+/*
+
+    THIS NEXT PART IS DEDICATED TO THE APPOINTMENTS
+
+*/
+
+// THIS REQUEST ALLOWS A USER OR AN ADMIN TO GET THE AVAILABILITIES OF A LAWYER
+router.get('/avocat/:id_avocat/horaire', validationToken, rendezVousController.getLawyerAppointments);
+
+// THIS REQUEST ALLOWS A USER OR AN ADMIN TO TAKE AN APPOINTMENT WITH A LAWYER
+router.post('/avocat/horaire', validationToken, rendezVousController.newAppointment);
+
+// THIS REQUEST ALLOWS TO DELETE AN APPOINTMENT (ONLY AVAILABLE FOR ADMINS)
+router.delete('/avocat/horaire/:id_rendez_vous', validationToken, rendezVousController.deleteLawyerAppointment);
+
+// THIS REQUEST ALLOWS TO MODIFY THE SCHEDULE OF A LAWYER (ONLY AVAILABLE FOR ADMINS)
+router.put('/avocat/horaire/modification', validationToken, rendezVousController.modifyLawyerAppointment);
+
+// THIS REQUEST ALLOWS A USER TO GET ALL HIS APPOINTMENTS
+router.get('/utilisateur/rendezvous', validationToken, rendezVousController.getUserAppointments);
+
+// THIS REQUEST ALLOWS A USER TO MODIFY HIS APPOINTMENTS
+router.delete('/utilisateur/rendezvous/:id_rendez_vous', validationToken, rendezVousController.deleteUserAppointment);
 
 module.exports = router;
+
+// date model : YYYY-MM-DD hh:mm:ss

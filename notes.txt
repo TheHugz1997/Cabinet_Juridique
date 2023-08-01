@@ -1,0 +1,16 @@
+PROCESS.ENV
+
+The process.env is a global object used to access all the environment variables of the environment your application is running. 
+That means that it is accessible everywhere in our application. 
+
+CORS
+
+The client and server have a different origin from each other, i.e., accessing resources from a different server. In this case,
+trying to make a request to a resource on the other server will fail.
+This is a security concern for the browser. CORS comes into play to disable this mechanism and allow access to these resources.
+CORS will add a response header access-control-allow-origins and specify which origins are permitted. CORS ensures that we are sending the right headers.
+
+ORM
+
+Un mapping objet-relationnel (en anglais object-relational mapping ou ORM) est un type de programme informatique qui se place en interface entre un programme
+applicatif et une base de données relationnelle pour simuler une base de données orientée objet.

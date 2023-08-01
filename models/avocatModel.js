@@ -14,8 +14,8 @@ const Avocat = db.define('Avocat', {
         allowNull: false 
     },
     coordonnees: { 
-        type: Sequelize.TEXT,
-        allowNull: false 
+        type: Sequelize.STRING,
+        allowNull: false
     },
     honoraires: {
         type: Sequelize.INTEGER,
@@ -24,7 +24,12 @@ const Avocat = db.define('Avocat', {
     photo: {
         type: Sequelize.TEXT,
         allowNull: true
-    }
-})
+    }}, 
+    {
+        indexes: [{unique:true, fields: ['coordonnees']}]
+    })
 
 module.exports = Avocat;
+
+// sequelize.define('user', {email: {type: Sequelize.STRING, unique:true}})
+// sequelize.define('user', {email: Sequelize.STRING}, {indexes:[{unique:true, fields: ['email']}]})
