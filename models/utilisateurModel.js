@@ -8,7 +8,7 @@ const Utilisateur = db.define('Utilisateur', {
         allowNull: false,
         primaryKey: true
     },
-    password: {
+    mot_de_passe: {
         type: Sequelize.STRING,
         allowNull: false
     },
@@ -18,17 +18,19 @@ const Utilisateur = db.define('Utilisateur', {
     },
     telephone: { 
         type: Sequelize.STRING,
-        allowNull: false,
-        unique: true
+        allowNull: false
     },
-    email: {
+    mail_utilisateur: {
         type: Sequelize.STRING,
         allowNull: false
     },
     is_admin: {
         type: Sequelize.BOOLEAN,
         allowNull: false
+    }},
+    {
+        indexes: [{unique:true, fields: ['telephone']}]
     }
-})
+)
 
 module.exports = Utilisateur;

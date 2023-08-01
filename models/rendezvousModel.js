@@ -11,10 +11,6 @@ const RendezVous = db.define('RendezVous', {
     date: { 
         type: Sequelize.DATE, 
         allowNull: false 
-    },
-    heure: { 
-        type: Sequelize.DATE,
-        allowNull: false
     }
 })
 
