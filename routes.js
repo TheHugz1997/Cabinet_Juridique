@@ -12,18 +12,16 @@ const {validationToken} = require('./jwt');
 
 router.get('/', (req, res) => res.redirect('/domaines'));
 
-// router.get('/acceuil', acceuilController.acceuil);
-
 // THIS REQUEST ALLOWS TO GET ALL THE LEGAL FIELDS
 router.get('/domaines', validationToken, domaineController.legalFieldList);
 
-// TODO: THE FOLLOWING REQUEST MUST BE A POST
+// THIS REQUEST ALLOWS TO CREATE A NEW LEGAL FIELD
 router.post('/domaine/creation', validationToken, domaineController.legalFieldCreation);
 
-// TODO: THE FOLLOWING REQUEST MUST BE A DELETE
+// THIS REQUEST ALLOWS TO DELETE A LEGAL FIELD
 router.delete('/domaine/:id_domaine', validationToken, domaineController.legalFieldDelete);
 
-// TODO: THE FOLLOWING REQUEST MUST BE A PUT
+// THIS REQUEST ALLOWS TO MODIFY A LEGAL FIELD
 router.put('/domaine', validationToken, domaineController.legalFieldModification);
 
 // THIS REQUEST ALLOWS TO GET ALL THE LAWYERS THAT BELONG TO A LEGAL FIELD
@@ -84,5 +82,3 @@ router.get('/utilisateur/rendezvous', validationToken, rendezVousController.getU
 router.delete('/utilisateur/rendezvous/:id_rendez_vous', validationToken, rendezVousController.deleteUserAppointment);
 
 module.exports = router;
-
-// date model : YYYY-MM-DD hh:mm:ss
