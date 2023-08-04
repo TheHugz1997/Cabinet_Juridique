@@ -43,28 +43,24 @@ exports.legalFieldLawyers = async function (req, res) {
     let id_domaine = parseInt(req.params.id_domaine);
     let is_admin = req.is_admin;
 
-    if(is_admin == true){
-
-        await Domaine.findAll({where: 
-            {id_domaine: id_domaine},
-            attributes: ['id_domaine', 'nom_domaine'],
-            include: [{
-                model: Avocat,
-                attributes: ['nom_avocat', 'id_avocat'],
-                through: { attributes: [] }
-            }]
-        })
-        .then(data => {
-            if (data == 0) res.status(404).json({ message: "Legal field doesn't exist"});
-            else{
-                res.json(data);
-            }
-        })
-        .catch(err => {
-            res.status(500).json({ message: err.message })
-        })
-
-    }
+    await Domaine.findAll({where: 
+        {id_domaine: id_domaine},
+        attributes: ['id_domaine', 'nom_domaine'],
+        include: [{
+            model: Avocat,
+            attributes: ['nom_avocat', 'id_avocat'],
+            through: { attributes: [] }
+        }]
+    })
+    .then(data => {
+        if (data == 0) res.status(404).json({ message: "Legal field doesn't exist"});
+        else{
+            res.json(data);
+        }
+    })
+    .catch(err => {
+        res.status(500).json({ message: err.message })
+    })
 
 }
 

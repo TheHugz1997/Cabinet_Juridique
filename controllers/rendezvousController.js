@@ -51,9 +51,9 @@ exports.getLawyerAppointments = async function (req, res) {
             where: {id_avocat: id_avocat},
             attributes: ['id_avocat', 'nom_avocat'],
             include: [{
-                model: RendezVous,
-                attributes: ['id_utilisateur', 'date'],
-                through: { attributes: [] }
+                model: Utilisateur,
+                attributes: ['id_utilisateur', 'mail_utilisateur'],
+                through: { attributes: ['date'] }
             }]
         })
         .then(data => {
@@ -141,7 +141,7 @@ exports.modifyLawyerAppointment = async function (req, res) {
                 });
             }
     } else {
-    res.status(403).json({message: "Access denied"});
+        res.status(403).json({message: "Access denied"});
     }
 
 }
@@ -187,18 +187,24 @@ exports.getUserAppointments = async function (req, res) {
 exports.deleteUserAppointment = async function (req, res) {
     const id_utilisateur = req.id_utilisateur;
     const id_rendez_vous = req.params.id_rendez_vous;
-
-    if (isIdRendezVousPresent(id_rendez_vous)) {
-        await RendezVous.destroy({ where: 
-            { id_rendez_vous: id_rendez_vous}
-        })
-        .then(data => {
-            if (data == 0) res.status(404).json({ message: "Wrong appointment ID"});
-            else res.json({ message: "Appointment deleted", data});
-        })
-        .catch(err => {
-            res.status(500).json({ message: err.message });
-        })
+    let is_admin = req.is_admin;
+    
+    if(is_admin){
+        if (isIdRendezVousPresent(id_rendez_vous)) {
+            await RendezVous.destroy({ where: 
+                { id_rendez_vous: id_rendez_vous}
+            })
+            .then(data => {
+                if (data == 0) res.status(404).json({ message: "Wrong appointment ID"});
+                else res.json({ message: "Appointment deleted", data});
+            })
+            .catch(err => {
+                res.status(500).json({ message: err.message });
+            })
+        }
+        else res.status(404).json({ message: "Wrong appointment ID"});
+    } else {
+        res.status(403).json({message: "Access denied"});
     }
-    else res.status(404).json({ message: "Wrong appointment ID"});
+
 }
