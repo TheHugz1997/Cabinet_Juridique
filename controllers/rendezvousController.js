@@ -188,8 +188,8 @@ exports.deleteUserAppointment = async function (req, res) {
     const id_utilisateur = req.id_utilisateur;
     const id_rendez_vous = req.params.id_rendez_vous;
     let is_admin = req.is_admin;
-    
-    if(is_admin){
+
+    if(id_utilisateur){
         if (isIdRendezVousPresent(id_rendez_vous)) {
             await RendezVous.destroy({ where: 
                 { id_rendez_vous: id_rendez_vous}
