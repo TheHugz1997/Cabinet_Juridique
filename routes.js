@@ -13,7 +13,7 @@ const {validationToken} = require('./jwt');
 router.get('/', (req, res) => res.redirect('/domaines'));
 
 // THIS REQUEST ALLOWS TO GET ALL THE LEGAL FIELDS
-router.get('/domaines', validationToken, domaineController.legalFieldList);
+router.get('/domaines', domaineController.legalFieldList);
 
 // THIS REQUEST ALLOWS TO CREATE A NEW LEGAL FIELD
 router.post('/domaine/creation', validationToken, domaineController.legalFieldCreation);
