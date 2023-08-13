@@ -37,7 +37,7 @@ router.delete('/domaine/avocat/relation/:id_relation', validationToken, domainea
 router.get('/domaines/avocats/relations', validationToken, domaineavocatController.allLegalFieldsLawyersLinks);
 
 // THIS REQUEST ALLOWS TO GET A LIST OF ALL THE LAWYERS
-router.get('/avocats', validationToken, avocatController.lawyersList);
+router.get('/avocats', avocatController.lawyersList);
 
 // THIS REQUEST ALLOWS TO CREATE A NEW LAWYER
 router.post('/avocat/creation', validationToken, avocatController.lawyerCreation);
