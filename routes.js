@@ -31,7 +31,7 @@ router.get('/domaine/:id_domaine/avocats', validationToken, domaineavocatControl
 router.post('/domaine/:id_domaine/avocat/:id_avocat/relation', validationToken, domaineavocatController.legalFieldLawyersLink);
 
 // THIS REQUEST ALLOWS TO DELETE A LINK BETWEEN A LAWYER AND A LEGAL FIELD
-router.delete('/domaine/avocat/relation/:id_relation', validationToken, domaineavocatController.deleteLawyerLegalFieldLink)
+router.delete('/domaine/:id_domaine/avocat/:id_avocat/relation', validationToken, domaineavocatController.deleteLawyerLegalFieldLink)
 
 // THIS REQUEST ALLOWS TO GET ALL THE RELATIONS BETWEEN THE LAWYERS AND THE LEGAL FIELDS
 router.get('/domaines/avocats/relations', validationToken, domaineavocatController.allLegalFieldsLawyersLinks);
@@ -56,6 +56,9 @@ router.post('/connexion', utilisateurController.clientLogin);
 
 // THIS REQUEST ALLOWS A USER OR AN ADMIN TO REGISTER
 router.post('/inscription', utilisateurController.clientRegistration);
+
+// THIS REQUEST ALLOWS A USER OR AN ADMIN TO LOGOUT
+router.get('/logout', utilisateurController.clientLogout);
 
 /*
 

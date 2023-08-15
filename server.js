@@ -9,12 +9,11 @@ app.use(express.json());
 // cookie parser
 const cookieParser = require("cookie-parser");
 app.use(cookieParser());
-  
 
-// access-control-allow-origins
+// // access-control-allow-origins
 const cors = require('cors');
-app.use(cors());
-
+app.use(cors({origin: ['http://localhost:4200', 'http://127.0.0.1:4200']}));
+  
 require('dotenv').config();
 
 // Importing the database model

@@ -10,9 +10,10 @@ const Utilisateur = db.Utilisateur;
 const {createTokens} = require('../jwt');
 
 
-// THIS is for the REGISTRATION of the client
+// This is for the registration of the client
+
 exports.clientRegistration = async function (req, res) {
-    is_admin = !!req.body.is_admin;
+    is_admin = 0;
     try{
         const salt = await bcrypt.genSalt(10);
         const hashePassword = await bcrypt.hash(req.body.mot_de_passe, salt);
@@ -35,11 +36,12 @@ exports.clientRegistration = async function (req, res) {
     }
 }
 
-// THIS is for the LOGIN of the client WITH JWT
+// This is for the LOGIN of the client with JWT
+
 exports.clientLogin = async function (req, res) {
     console.log(req.body.mail_utilisateur);
     let user = await Utilisateur.findOne({where : {mail_utilisateur: req.body.mail_utilisateur}});
-    is_admin = user.is_admin;
+    const is_admin = user.is_admin;
     if (!user) return res.status(400).send('Invalid Email or Password.')
   
     const validPassword = await bcrypt.compare(req.body.mot_de_passe, user.mot_de_passe);
@@ -47,10 +49,21 @@ exports.clientLogin = async function (req, res) {
     else {
         const accessToken = createTokens(user);
 
+        const maxAge = 60*60*24*30*1000;
+
         res.cookie("access-Token", accessToken, {
-            maxAge: 60*60*24*30*1000, 
-            httpOnly: true
+            maxAge: maxAge, 
+            httpOnly: false
         });
-        res.json("Connection completed")
+        res.json({accessToken: accessToken, maxAge: maxAge, is_admin: is_admin});
     }
+}
+
+// This is for the LOGOUT of the client with JWT
+
+exports.clientLogout = async function (req, res) {
+    res.status(200).clearCookie('access-Token', {
+        path: '/'
+    });
+    res.redirect('/');
 }
