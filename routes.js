@@ -10,9 +10,25 @@ const rendezVousController = require('./controllers/rendezvousController.js');
 
 const {validationToken} = require('./jwt');
 
-router.get('/', (req, res) => res.redirect('/domaines'));
+/*
+
+    THIS NEXT PART IS DEDICATED TO CONNECTION
+
+*/
+
+// THIS REQUEST ALLOWS A USER OR AN ADMIN TO LOG IN
+router.post('/connexion', utilisateurController.clientLogin);
+
+// THIS REQUEST ALLOWS A USER OR AN ADMIN TO REGISTER
+router.post('/inscription', utilisateurController.clientRegistration);
+
+// THIS REQUEST ALLOWS A USER OR AN ADMIN TO LOGOUT
+router.get('/logout', utilisateurController.clientLogout);
+
+
 
 // THIS REQUEST ALLOWS TO GET ALL THE LEGAL FIELDS
+router.get('/', (req, res) => res.redirect('/domaines'));
 router.get('/domaines', domaineController.legalFieldList);
 
 // THIS REQUEST ALLOWS TO CREATE A NEW LEGAL FIELD
@@ -51,22 +67,13 @@ router.delete('/avocat/:id_avocat', validationToken, avocatController.lawyerDele
 // THIS REQUEST ALLOWS TO MODIFY AN EXISTING LAWYER
 router.put('/avocat', validationToken, avocatController.lawyerModification);
 
-// THIS REQUEST ALLOWS A USER OR AN ADMIN TO LOG IN
-router.post('/connexion', utilisateurController.clientLogin);
-
-// THIS REQUEST ALLOWS A USER OR AN ADMIN TO REGISTER
-router.post('/inscription', utilisateurController.clientRegistration);
-
-// THIS REQUEST ALLOWS A USER OR AN ADMIN TO LOGOUT
-router.get('/logout', utilisateurController.clientLogout);
-
 /*
 
     THIS NEXT PART IS DEDICATED TO THE APPOINTMENTS
 
 */
 
-// THIS REQUEST ALLOWS A USER OR AN ADMIN TO GET THE AVAILABILITIES OF A LAWYER
+// THIS REQUEST ALLOWS TO GET THE AVAILABILITIES OF A LAWYER (ONLY AVAILABLE FOR ADMINS)
 router.get('/avocat/:id_avocat/horaire', validationToken, rendezVousController.getLawyerAppointments);
 
 // THIS REQUEST ALLOWS A USER OR AN ADMIN TO TAKE AN APPOINTMENT WITH A LAWYER
@@ -80,8 +87,5 @@ router.put('/avocat/horaire/modification', validationToken, rendezVousController
 
 // THIS REQUEST ALLOWS A USER TO GET ALL HIS APPOINTMENTS
 router.get('/utilisateur/rendezvous', validationToken, rendezVousController.getUserAppointments);
-
-// THIS REQUEST ALLOWS A USER TO MODIFY HIS APPOINTMENTS
-router.delete('/utilisateur/rendezvous/:id_rendez_vous', validationToken, rendezVousController.deleteUserAppointment);
 
 module.exports = router;

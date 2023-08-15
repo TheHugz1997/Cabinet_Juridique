@@ -44,26 +44,30 @@ function isIdRendezVousPresent (id){
 exports.getLawyerAppointments = async function (req, res) {
     let id_avocat = parseInt(req.params.id_avocat);
     let avocatIdPresent = isIdAvocatPresent(req.params.id_avocat);
+    let is_admin = req.is_admin;
 
-    console.log(typeof(id_avocat));
-    if(avocatIdPresent) {
-        await Avocat.findAll({
-            where: {id_avocat: id_avocat},
-            attributes: ['id_avocat', 'nom_avocat'],
-            include: [{
-                model: Utilisateur,
-                attributes: ['id_utilisateur', 'mail_utilisateur'],
-                through: { attributes: ['date'] }
-            }]
-        })
-        .then(data => {
-            res.json(data);
-        })
-        .catch(err => {
-            res.status(500).json({ message: err.message })
-        });
+    if(is_admin) {
+        if(avocatIdPresent) {
+            await Avocat.findAll({
+                where: {id_avocat: id_avocat},
+                attributes: ['id_avocat', 'nom_avocat'],
+                include: [{
+                    model: Utilisateur,
+                    attributes: ['id_utilisateur', 'mail_utilisateur'],
+                    through: { attributes: ['date'] }
+                }]
+            })
+            .then(data => {
+                res.json(data);
+            })
+            .catch(err => {
+                res.status(500).json({ message: err.message })
+            });
+        } else {
+            res.status(404).json({message : "Lawyer doesn't exist"});
+        }
     } else {
-        res.status(404).json({message : "Lawyer doesn't exist"});
+        res.status(403).json({message: "Access denied"});
     }
 }
 
@@ -181,30 +185,4 @@ exports.getUserAppointments = async function (req, res) {
     .catch(err => {
         res.status(500).json({ message: err.message });
     });
-}
-
-
-exports.deleteUserAppointment = async function (req, res) {
-    const id_utilisateur = req.id_utilisateur;
-    const id_rendez_vous = req.params.id_rendez_vous;
-    let is_admin = req.is_admin;
-
-    if(id_utilisateur){
-        if (isIdRendezVousPresent(id_rendez_vous)) {
-            await RendezVous.destroy({ where: 
-                { id_rendez_vous: id_rendez_vous}
-            })
-            .then(data => {
-                if (data == 0) res.status(404).json({ message: "Wrong appointment ID"});
-                else res.json({ message: "Appointment deleted", data});
-            })
-            .catch(err => {
-                res.status(500).json({ message: err.message });
-            })
-        }
-        else res.status(404).json({ message: "Wrong appointment ID"});
-    } else {
-        res.status(403).json({message: "Access denied"});
-    }
-
 }
