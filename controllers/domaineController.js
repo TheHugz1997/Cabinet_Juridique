@@ -18,16 +18,13 @@ exports.legalFieldCreation = async function (req, res) {
     let the_nom_domaine = req.body.nom_domaine;
     let the_description = req.body.descritpion;
     let is_admin = req.is_admin;
-    
+
     if(is_admin == true){
         let domaine = Domaine.build({ nom_domaine: the_nom_domaine, description: the_description})
         await domaine.save()
         .then(data => {
-            if (data == 0) res.status(400).json({ message: "Required request body is missing"});
-            else{
-                console.log(domaine.toJSON());
-                res.json(data);
-            }
+            console.log(domaine.toJSON());
+            res.json(data);
         })
         .catch(err => {
             res.status(500).json({ message: err.message })
