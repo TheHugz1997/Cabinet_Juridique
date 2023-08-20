@@ -72,11 +72,11 @@ exports.getLawyerAppointments = async function (req, res) {
 }
 
 exports.newAppointment = async function (req, res) {
-    let utilisateurIdPresent = isIdUtilisateurPresent(req.body.id_utilisateur);
+    let id_utilisateur = req.id_utilisateur;
     let avocatIdPresent = isIdAvocatPresent(req.body.id_avocat);
 
-    if(utilisateurIdPresent && avocatIdPresent){
-        let adding = RendezVous.build({id_utilisateur: req.body.id_utilisateur, id_avocat: req.body.id_avocat, date: req.body.date});
+    if(avocatIdPresent){
+        let adding = RendezVous.build({id_utilisateur: id_utilisateur, id_avocat: req.body.id_avocat, date: req.body.date});
         await adding.save()
         .then(data => {
             res.json({ message: "Appointment added successfully", ...data.toJSON()});

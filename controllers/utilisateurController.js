@@ -65,5 +65,4 @@ exports.clientLogout = async function (req, res) {
     res.status(200).clearCookie('access-Token', {
         path: '/'
     });
-    res.redirect('/');
 }
